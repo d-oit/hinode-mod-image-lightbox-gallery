@@ -1,11 +1,12 @@
 ---
+params:
+    lightbox:
+        showImageCaption: false
 title: "Gallery Stack Sample"
 slug: "gallery-stack-sample"
 thumbnail:
     url: /img/tests/1_boots.jpg
-params:
-    lightbox:
-        showImageCaption: false
+
 
 ---
 

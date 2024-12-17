@@ -24,4 +24,4 @@ resources:
 
 ## Gallery - Stack image resource Sample
 
-{{< gallery useRandomImageStack=false >}}
+{{< gallery useRandomImageStack=false showSearch=true >}}

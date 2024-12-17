@@ -1,3 +1,6 @@
+(() => {
+
+  'use strict';
 /* eslint-disable */
 {{- $enableZoom := .Site.Params.lightbox.enablezoom -}}
 {{- $enableRotate := .Site.Params.lightbox.enableRotate -}}
@@ -6,9 +9,6 @@
 {{- $showImageCaption := .Page.Params.lightbox.showImageCaption | default .Site.Params.lightbox.showImageCaption -}}
 {{- $showCloseButton := .Page.Params.lightbox.showCloseButton | default true -}}
 /* eslint-enable */
-
-(() => {
-  'use strict';
 
   // Cached DOM selectors and constants
   const FA_NAMESPACE = 'http://www.w3.org/2000/svg';
@@ -166,8 +166,10 @@
             case 'ArrowLeft':
               navigateImage(currentImg, -1);
               break;
-            case 'Escape':                    
-              document.body.removeChild(lightboxContainer);      
+            case 'Escape': 
+              if (document.body.contains(lightboxContainer)) {
+                document.body.removeChild(lightboxContainer);
+              }                   
               document.removeEventListener('keydown', handleKeyNavigation);
               break;
             }
@@ -195,6 +197,7 @@
 
   // Create image title
   const createImageTitle = (lightboxImage) => {
+
     {{ if eq $showImageCaption false }}
       return
     {{ end}}  
@@ -218,7 +221,7 @@
         titleSpan.classList.add('additional-lines');
       }
       
-      titleSpan.textContent = line.trim();
+      titleSpan.textContent = line.replace('\n','').trim();
       titleDiv.appendChild(titleSpan);
     });
   
@@ -275,6 +278,8 @@
         lightbox.appendChild(titleElement);
       }
 
+      
+
       // Add navigation containers
       {{ if not $disableSliderButtons }}
       const slidePrevious = createElementWithClass('div', 'slide-lightbox-container slide-btn-container-previous');
@@ -294,7 +299,9 @@
       const attachClosing = (element) => {
         element.addEventListener('click', (e) => {
           if (e.target === lightbox || e.target === controls.close) {
-            document.body.removeChild(lightbox);
+            if (document.body.contains(lightbox)) {
+              document.body.removeChild(lightbox);
+            }  
           }
         });
       };

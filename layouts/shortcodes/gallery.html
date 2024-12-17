@@ -5,13 +5,12 @@
 {{- $ratio := .Get "ratio" | default "auto" -}}
 {{- $loading := .Get "loading" | default "lazy" -}}
 {{- $searchclass := .Get "searchclass" | default "md" -}}
-{{- $showGalleryImageCaption := .Get "showGalleryImageCaption" | default false -}}
+{{- $showGalleryImageCaption := .Get "showGalleryImageCaption" | default true -}}
 {{- $showSearch := .Get "showSearch" | default false -}}
 {{- $galleryCssClass := .Get "galleryCssClass" | default "normal-gallery" -}}
 <!-- TODO handling for picture figure -->
 {{- $caption := "" -}}
 
-<p>test: {{- .Page.Params.lightbox.showImageCaption -}}</p>
 <!-- Initialize $images to prevent the undefined variable error -->
 {{- $images := slice }}
 
@@ -104,6 +103,8 @@
         {{- if ne $description "" -}}
             {{- $dataAttributes = printf "%s data-image-description=%q" $dataAttributes $description -}}
         {{- end -}}
+
+        {{- $dataAttributes = printf "%s data-show-image-caption=%q" $dataAttributes $showGalleryImageCaption -}}
 
         {{ if ne $description "" }}
             {{- $title = printf "%s\n%q" $title $description -}}

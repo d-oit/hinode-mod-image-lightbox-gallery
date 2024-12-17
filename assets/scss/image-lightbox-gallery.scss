@@ -222,16 +222,16 @@
   z-index: 10;
 }
 
-.lightbox-title .title-caption {
+.slgcaption-container .title-caption {
   display: block;
 }
 
-.lightbox-title .first-line {
+span.title-caption.first-line {
   font-weight: bold;
   font-size: 1em;
 }
 
-.lightbox-title .additional-lines {
+span.title-caption.additional-lines {
   font-weight: normal;
   font-size: 0.8em;
   opacity: 0.9;
@@ -248,8 +248,5 @@
   border-radius: 3px;
   font-size: 14px;
 }
-
-// 2) Include default variable overrides
-@import "slideshow-gallery.scss";
 
 
