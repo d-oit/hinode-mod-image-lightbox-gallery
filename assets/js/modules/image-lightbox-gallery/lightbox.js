@@ -204,24 +204,23 @@
     // create div for image title and description
     const titleDiv = createElementWithClass('div', LIGHTBOX_CLASSES.title);
     
-    // Split the title by newline
-    const titleLines = title.split('\n');
-    
+    // Split the title by newline and filter out any empty lines
+    const titleLines = title.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+
     titleLines.forEach((line, index) => {
       const titleSpan = document.createElement('span');
       titleSpan.classList.add('title-caption');
-      
-      // First line bold, subsequent lines small
+
+      // Add class based on whether it's the first line or additional lines
       if (index === 0) {
         titleSpan.classList.add('first-line');
       } else {
         titleSpan.classList.add('additional-lines');
       }
-      
-      titleSpan.textContent = line.replace('\n','').trim();
+
+      titleSpan.textContent = line;
       titleDiv.appendChild(titleSpan);
     });
-  
     return titleDiv;
   };
 

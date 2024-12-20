@@ -9,4 +9,4 @@ thumbnail:
 
 ## Gallery - Random Stack image path resource Sample
 
-{{< gallery useRandomImageStack=true imagePath="img/tests/" >}}
+{{< gallery useRandomImageStack=true imagePath="img/tests/" showGalleryImageCaption=false >}}
