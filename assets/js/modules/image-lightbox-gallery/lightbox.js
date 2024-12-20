@@ -1,14 +1,13 @@
 (() => {
-
   'use strict';
 /* eslint-disable */
 {{- $enableZoom := .Site.Params.lightbox.enablezoom -}}
 {{- $enableRotate := .Site.Params.lightbox.enableRotate -}}
 {{- $disableSliderButtons := .Site.Params.lightbox.disableSliderButtons -}}
 {{- $showImageAmount := .Site.Params.lightbox.showImageAmount -}}
-{{- $showImageCaption := .Page.Params.lightbox.showImageCaption | default .Site.Params.lightbox.showImageCaption -}}
-{{- $showCloseButton := .Page.Params.lightbox.showCloseButton | default true -}}
 /* eslint-enable */
+
+  var showImageCaption = false;
 
   // Cached DOM selectors and constants
   const FA_NAMESPACE = 'http://www.w3.org/2000/svg';
@@ -197,10 +196,8 @@
 
   // Create image title
   const createImageTitle = (lightboxImage) => {
-
-    {{ if eq $showImageCaption false }}
-      return
-    {{ end}}  
+    if  (!showImageCaption) return
+    console.log('Creating image title')
     const title = lightboxImage.getAttribute('alt');
   
     if (!title) return null;
@@ -239,9 +236,11 @@
   const showLightbox = (img) => {
     try {
       const lightbox = createElementWithClass('div', LIGHTBOX_CLASSES.container);
+
+      showImageCaption = img.closest('.gallery-item')?.dataset.showImageCaption === 'true';
       const lightboxImage = createLightboxImage(img);
       const toolbar = createElementWithClass('div', LIGHTBOX_CLASSES.toolbar);
-
+      
       const controls = {
         {{ if $enableZoom }}
         zoomIn: createButton('zoom-in-button', '+'),
@@ -251,9 +250,7 @@
         rotateLeft: createButton('rotate-left-button', '⟲'),
         rotateRight: createButton('rotate-right-button', '⟳'),
         {{ end }}
-        {{ if $showCloseButton }}
         close: createButton('close-button', '&times;'),
-        {{ end }}
         prev: createButton('prev-button btn', '&larr;'),
         next: createButton('next-button btn', '&rarr;')
       };

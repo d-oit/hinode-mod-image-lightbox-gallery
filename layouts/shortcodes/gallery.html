@@ -23,7 +23,6 @@
     {{- $images = where $images "MediaType.MainType" "image" -}}
 {{- end }}
 
-
 {{- if $useRandomImageStack -}}
     {{- $images = shuffle $images -}} <!-- Shuffle images if randomization is true -->
     {{- $galleryCssClass = "collage-gallery" -}}
@@ -32,7 +31,6 @@
 {{- if $showSearch -}}
     {{ partial "assets/gallery-search-input.html" (dict "searchclass" (printf "mt-4 mt-%s-0" $searchclass)) }}
 {{- end -}}
-
 
 <!-- Gallery Wrapper -->
 <div class="gallery {{ $galleryCssClass }}">
@@ -101,10 +99,10 @@
 
         {{- $dataAttributes = printf "%s data-image-permalink=%q" $dataAttributes $imageUrl -}}
         {{- if ne $description "" -}}
-            {{- $dataAttributes = printf "%s data-image-description=%q" $dataAttributes $description -}}
+            {{- $dataAttributes = printf "%s data-image-data-show-image-caption=%q" $dataAttributes $description -}}
         {{- end -}}
 
-        {{- $dataAttributes = printf "%s data-show-image-caption=%q" $dataAttributes $showGalleryImageCaption -}}
+        {{- $dataAttributes = printf "%s data-show-image-caption=%t" $dataAttributes $showGalleryImageCaption -}}
 
         {{ if ne $description "" }}
             {{- $title = printf "%s\n%q" $title $description -}}

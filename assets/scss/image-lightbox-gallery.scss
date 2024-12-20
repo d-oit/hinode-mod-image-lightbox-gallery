@@ -249,4 +249,24 @@ span.title-caption.additional-lines {
   font-size: 14px;
 }
 
+.lightbox-title {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+}
 
+.title-caption.first-line::after {
+  content: "\A"; /* Inserts a line break */
+  white-space: pre; /* Allows the line break to work */
+}
+
+.title-caption.additional-lines {
+  display: block; /* Forces the second line to start on a new line */
+  margin-top: 5px; /* Optional spacing between lines */
+}
