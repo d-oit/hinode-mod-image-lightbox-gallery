@@ -8,8 +8,7 @@
 {{- $showGalleryImageCaption := .Get "showGalleryImageCaption" | default true -}}
 {{- $showSearch := .Get "showSearch" | default false -}}
 {{- $galleryCssClass := .Get "galleryCssClass" | default "normal-gallery" -}}
-<!-- TODO handling for picture figure -->
-{{- $caption := "" -}}
+{{- $caption := .Get "caption" | default "" -}}
 
 <!-- Initialize $images to prevent the undefined variable error -->
 {{- $images := slice }}
