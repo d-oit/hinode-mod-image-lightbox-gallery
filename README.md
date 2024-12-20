@@ -1,8 +1,8 @@
-# Hinode Module - Template
+# Hinode Module - Slideshow Gallery
 
 <!-- Tagline -->
 <p align="center">
-    <b>A template to define a Hugo module compatible with Hinode</b>
+    <b>A slideshow gallery shortcode for Hugo compatible with Hinode</b>
     <br />
 </p>
 
@@ -43,19 +43,24 @@ This module uses [semantic-release][semantic-release] to automate the release of
 This module supports the following parameters (see the section `params.modules` in `config.toml`):
 
 ```toml
-showSlideshowGallery = false
-
-[lightbox]
-    enableZoom = true
-    enableRotate = false
-    showImageAmount = true
-    showImageCaption = true
 
 [modules]
-    [modules.image-lightbox-gallery]
-        integration = "critical"
+    [modules.mod-slideshow-gallery]
+        integration = "optional"
         state = "async"
         localize = true
+```
+
+## Load the module in the markdown file in front matter
+
+```yaml
+modules: ["slideshow-gallery"]
+```
+
+## slideshow-gallery markdown shortcode
+
+```markdown
+{{< slideshow-gallery >}}
 ```
 
 <!-- MARKDOWN LINKS -->
