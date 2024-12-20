@@ -1,6 +1,6 @@
 ---
 type: minimal
-title: "Gallery Stack Resources Sample1"
+title: "Gallery Stack Resources Sample"
 thumbnail:
     url: /img/bird.jpg
     
