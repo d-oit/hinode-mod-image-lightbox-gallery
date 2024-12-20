@@ -1,4 +1,4 @@
-module github.com/d-oit/mod-slideshow-gallery/exampleSite
+module github.com/d-oit/mod-image-lightbox-gallery/exampleSite
 
 go 1.19
 

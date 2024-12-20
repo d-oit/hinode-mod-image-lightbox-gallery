@@ -1,7 +1,7 @@
 ---
 author: d.o.it
-title: Slideshow Gallery
-description: A Hinode Slideshow Gallery module
+title: Gallery
+description: A Hinode lightbox Gallery module
 nested: true
 ---
 

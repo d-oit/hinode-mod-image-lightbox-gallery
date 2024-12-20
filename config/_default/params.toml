@@ -1,6 +1,12 @@
+[lightbox]
+    enableZoom = true
+    enableRotate = false 
+    showImageAmount = true
+    disableSliderButtons = false
+
 [modules]
-    [modules.slideshow-gallery]
-        integration = "optional"
+    [modules.image-lightbox-gallery]
+        integration = "critical"
         state = "async"
         localize = true
         

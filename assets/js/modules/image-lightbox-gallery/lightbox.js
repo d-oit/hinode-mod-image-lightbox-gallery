@@ -201,7 +201,7 @@
     const title = lightboxImage.getAttribute('alt');
   
     if (!title) return null;
-  
+    // create div for image title and description
     const titleDiv = createElementWithClass('div', LIGHTBOX_CLASSES.title);
     
     // Split the title by newline
@@ -274,8 +274,6 @@
       if (titleElement) {
         lightbox.appendChild(titleElement);
       }
-
-      
 
       // Add navigation containers
       {{ if not $disableSliderButtons }}
