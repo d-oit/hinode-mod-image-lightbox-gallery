@@ -1,35 +1,41 @@
-name: Update Hugo Module Dependencies
-
+name: Update Hugo dependencies
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *" # Run daily at midnight
+    - cron: '0 3 * * *' # run daily at 03:00 AM
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
-  update-dependencies:
+  update-mod:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          go-version: 1.20 # Adjust to your required Go version
+          node-version: lts/*
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
 
-      - name: Install Hugo
-        run: |
-          HUGO_VERSION=$(curl -s https://api.github.com/repos/gohugoio/hugo/releases/latest | jq -r '.tag_name')
-          wget https://github.com/gohugoio/hugo/releases/download/${HUGO_VERSION}/hugo_${HUGO_VERSION#v}_Linux-64bit.tar.gz
-          tar -xzf hugo_${HUGO_VERSION#v}_Linux-64bit.tar.gz hugo
-          sudo mv hugo /usr/local/bin
-          hugo version
+      # [26/AUG/23] Adjusted from npm ci to prevent EBADPLATFORM error due to fsevents
+      - name: Install npm
+        run: npm i
 
       - name: Update Hugo module dependencies
+        id: mod-updates
         run: |
-          hugo mod get -u ./...
-          hugo mod tidy
+          MOD_OUTPUT=$(npm run mod:update 2>&1)
+          echo "$MOD_OUTPUT"
+          MOD_UPDATES=$(echo "$MOD_OUTPUT" | grep '^go: upgraded' | sed 's/go: / - /' | sort -u)
+          echo 'MOD_UPDATES<<EOF' >> $GITHUB_OUTPUT
+          echo "$MOD_UPDATES" >> "$GITHUB_OUTPUT"
+          echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Commit and Push Changes
         run: |
