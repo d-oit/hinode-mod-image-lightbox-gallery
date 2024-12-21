@@ -23,13 +23,16 @@ jobs:
           hugo mod get -u ./...
           hugo mod tidy
 
-      - name: Commit changes
-        uses: github-actions-x/commit@v2.11
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          commit_message: "fix: update Hugo module dependencies"
-          branch: hugo-mod-dependencies # Create a branch for updates
-          push: true
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b hugo-mod-dependencies
+          git add go.mod go.sum
+          git commit -m "fix: update Hugo module dependencies"
+          git push origin hugo-mod-dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Pull Request
         uses: actions/github-script@v6
