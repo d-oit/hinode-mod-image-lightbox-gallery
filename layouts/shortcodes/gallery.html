@@ -97,12 +97,12 @@
         {{- end -}}
 
         {{- $dataAttributes = printf "%s data-image-permalink=%q" $dataAttributes $imageUrl -}}
-        {{- if ne $description "" -}}
-            {{- $dataAttributes = printf "%s data-image-data-show-image-caption=%q" $dataAttributes $description -}}
-        {{- end -}}
-
         {{- $dataAttributes = printf "%s data-show-image-caption=%t" $dataAttributes $showGalleryImageCaption -}}
 
+        {{- if ne $description "" -}}
+            {{- $dataAttributes = printf "%s data-image-description=%q" $dataAttributes false -}}
+        {{- end -}}
+       
         {{ if ne $description "" }}
             {{- $title = printf "%s\n%q" $title $description -}}
         {{ end }}
