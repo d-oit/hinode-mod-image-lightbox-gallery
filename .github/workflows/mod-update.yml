@@ -41,53 +41,6 @@ jobs:
           echo "$MOD_UPDATES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      # Step 5: Commit and push changes to a new branch
+      # Step 5: Commit and Push Changes
       - name: Commit and Push Changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b hugo-mod-dependencies
-          git add go.mod go.sum
-          if git diff-index --quiet HEAD; then
-            echo "No changes to commit"
-          else
-            git commit -m "fix: update Hugo module dependencies"
-            git push origin hugo-mod-dependencies || echo "Branch already exists"
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Step 6: Create Pull Request
-      - name: Create Pull Request
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const branchName = "hugo-mod-dependencies";
-
-            try {
-              // Check for existing PRs with the branch name
-              const existingPRs = await github.rest.pulls.list({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                head: `${context.repo.owner}:${branchName}`,
-                state: "open",
-              });
-
-              if (existingPRs.data.length > 0) {
-                core.info("A pull request for this branch already exists. Skipping PR creation.");
-              } else {
-                // Create a new pull request
-                const { data: pullRequest } = await github.rest.pulls.create({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  title: "Update Hugo module dependencies",
-                  head: branchName,
-                  base: "main",
-                  body: "This PR updates Hugo module dependencies automatically."
-                });
-                core.info(`Pull request created: ${pullRequest.html_url}`);
-              }
-            } catch (error) {
-              core.setFailed(`Failed to create pull request: ${error.message}`);
-            }
+        run
