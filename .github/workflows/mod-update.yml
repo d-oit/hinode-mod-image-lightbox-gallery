@@ -1,8 +1,9 @@
-name: Update Hugo dependencies
+name: Update Hugo Dependencies
+
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * *' # run daily at 03:00 AM
+    - cron: '0 3 * * *' # Run daily at 03:00 AM
 
 permissions:
   contents: write
@@ -13,9 +14,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Step 2: Setup Node.js environment for npm
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -23,42 +26,61 @@ jobs:
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
 
-      # [26/AUG/23] Adjusted from npm ci to prevent EBADPLATFORM error due to fsevents
+      # Step 3: Install npm dependencies
       - name: Install npm
-        run: npm i
+        run: npm install
 
+      # Step 4: Update Hugo module dependencies
       - name: Update Hugo module dependencies
         id: mod-updates
         run: |
           MOD_OUTPUT=$(npm run mod:update 2>&1)
           echo "$MOD_OUTPUT"
           MOD_UPDATES=$(echo "$MOD_OUTPUT" | grep '^go: upgraded' | sed 's/go: / - /' | sort -u)
-          echo 'MOD_UPDATES<<EOF' >> $GITHUB_OUTPUT
-          echo "$MOD_UPDATES" >> "$GITHUB_OUTPUT"
-          echo 'EOF' >> $GITHUB_OUTPUT
+          echo "MOD_UPDATES<<EOF" >> $GITHUB_OUTPUT
+          echo "$MOD_UPDATES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
+      # Step 5: Commit and push changes to a new branch
       - name: Commit and Push Changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b hugo-mod-dependencies
-          git add go.mod go.sum
-          git commit -m "fix: update Hugo module dependencies"
-          git push origin hugo-mod-dependencies
+          git add . || true # Add all changes recursively, including in subdirectories
+          if git diff-index --quiet HEAD; then
+            echo "No changes to commit"
+          else
+            git commit -m "fix: update Hugo module dependencies"
+            git push origin hugo-mod-dependencies || echo "Branch already exists"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Step 6: Create Pull Request
       - name: Create Pull Request
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data: pullRequest } = await github.pulls.create({
+            const branchName = "hugo-mod-dependencies";
+            const { data: existingPRs } = await github.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: "Update Hugo module dependencies",
-              head: "hugo-mod-dependencies",
-              base: "main",
-              body: "This PR updates Hugo module dependencies automatically."
+              head: `${context.repo.owner}:${branchName}`,
+              state: "open",
             });
-            core.info(`Pull request created: ${pullRequest.html_url}`);
+
+            if (existingPRs.length > 0) {
+              core.info("A pull request for this branch already exists. Skipping PR creation.");
+            } else {
+              const { data: pullRequest } = await github.pulls.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: "Update Hugo module dependencies",
+                head: branchName,
+                base: "main",
+                body: "This PR updates Hugo module dependencies automatically."
+              });
+              core.info(`Pull request created: ${pullRequest.html_url}`);
+            }
