@@ -2,7 +2,7 @@
 
 <!-- Tagline -->
 <p align="center">
-    <b>A lightbox gallery shortcode for Hugo compatible with Hinode</b>
+    <b>A lightbox image function and gallery shortcode for Hugo compatible with Hinode</b>
     <br />
 </p>
 
@@ -47,6 +47,35 @@ This module supports the following parameters (see the section `params.modules` 
 ```markdown
 {{< gallery >}}
 ```
+
+### Parameters
+
+- `imagePath`: The path to the images. Default is "submit". Define the files in the front matter .md file like this:
+
+    ```yaml resources:
+  - src: "img/bird.jpg"
+    title: "Example caption 1"
+    params:
+      description: "Description for bird image
+      new line test
+      end of line
+      "
+    ```
+
+- `useExifCaption`: Whether to use EXIF captions. Default is **false**.
+- `useRandomImageStack`: Whether to randomize the image stack. Default is **false**.
+- `imageCssClass`: CSS class for the images. Default is "lightbox size-medium".
+- `ratio`: Aspect ratio of the images. Default is **auto**.
+- `loading`: Loading attribute for the images. Default is **lazy**.
+- `searchclass`: CSS class for the search input. Default is **md**.
+- `showGalleryImageCaption`: Whether to show the gallery image caption. Default is **true**.
+- `showSearch`: Whether to show the search input. Default is **false**.
+- `galleryCssClass`: CSS class for the gallery. Default is **normal-gallery**.
+- `caption`: Hinode image figure for the image. Default is an empty string. Define the lightbox caption in front matter.
+
+## Customization Styles
+
+You can customize the gallery by modifying the CSS styles in the `image-lightbox-gallery.scss` file located in the `assets/scss` directory.
 
 <!-- MARKDOWN LINKS -->
 [hugo]: https://gohugo.io

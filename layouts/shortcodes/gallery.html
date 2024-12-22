@@ -1,6 +1,6 @@
 {{- $imagePath := .Get "imagePath" | default "submit" -}}
 {{- $useExifCaption := .Get "useExifCaption" | default false -}}
-{{- $useRandomImageStack := .Get "useRandomImageStack" | default true -}} <!-- Control randomization -->
+{{- $useRandomImageStack := .Get "useRandomImageStack" | default false -}} <!-- Control randomization -->
 {{- $imageCssClass := .Get "imageCssClass" | default "lightbox size-medium" -}}
 {{- $ratio := .Get "ratio" | default "auto" -}}
 {{- $loading := .Get "loading" | default "lazy" -}}
