@@ -47,7 +47,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b hugo-mod-dependencies
-          git add . || true # Add all changes recursively, including in subdirectories
+          git add . || true
           if git diff-index --quiet HEAD; then
             echo "No changes to commit"
           else
@@ -64,17 +64,20 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const branchName = "hugo-mod-dependencies";
-            const { data: existingPRs } = await github.pulls.list({
+
+            // List existing PRs with the branch name
+            const existingPRs = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
               head: `${context.repo.owner}:${branchName}`,
               state: "open",
             });
 
-            if (existingPRs.length > 0) {
+            if (existingPRs.data.length > 0) {
               core.info("A pull request for this branch already exists. Skipping PR creation.");
             } else {
-              const { data: pullRequest } = await github.pulls.create({
+              // Create a new pull request
+              const { data: pullRequest } = await github.rest.pulls.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: "Update Hugo module dependencies",
