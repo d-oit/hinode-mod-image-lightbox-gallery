@@ -197,7 +197,6 @@
   // Create image title
   const createImageTitle = (lightboxImage) => {
     if  (!showImageCaption) return
-    console.log('Creating image title')
     const title = lightboxImage.getAttribute('alt');
   
     if (!title) return null;
@@ -205,8 +204,8 @@
     const titleDiv = createElementWithClass('div', LIGHTBOX_CLASSES.title);
     
     // Split the title by newline and filter out any empty lines
-    const titleLines = title.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-
+    const titleLines = title.split('&quot;').map(line => line.trim()).filter(line => line.length > 0);
+    
     titleLines.forEach((line, index) => {
       const titleSpan = document.createElement('span');
       titleSpan.classList.add('title-caption');
@@ -217,7 +216,7 @@
       } else {
         titleSpan.classList.add('additional-lines');
       }
-
+      line = line.replace(/\\n/g, '');
       titleSpan.textContent = line;
       titleDiv.appendChild(titleSpan);
     });

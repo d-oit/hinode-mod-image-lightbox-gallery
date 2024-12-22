@@ -9,10 +9,10 @@ resources:
   - src: "img/bird.jpg"
     title: "Example caption 1"
     params:
-      description: "Description for bird image
-      new line test
-      end of line
-      "
+      description: >
+        Description for bird image
+        new line test
+        end of line
       cssClass: "size-large"
   - src: "img/city.jpg"
     title: "Example caption 2"
