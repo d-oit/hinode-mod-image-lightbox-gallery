@@ -35,9 +35,11 @@
 <div class="gallery {{ $galleryCssClass }}">
     {{- range $index, $image := $images }}
         {{- $imageUrl := .RelPermalink }} <!-- Default to 3 columns -->
+        
         {{- $description := "" -}}
         {{- $title := "" -}}
         {{- $randomClass := "" -}}
+        {{- $isError := default false -}}
 
         {{ if eq $imagePath "submit" }}
             {{ with resources.Get $image.src }}
@@ -45,8 +47,10 @@
                 {{ $title = $image.title }}
                 {{ $description = $image.params.description }}
                 {{ $randomClass = $image.params.cssClass }}
+            {{ else }}
+                {{ $isError = true }}
+                {{ warnf "Resource file not found:\n'%s'\n page\n '%s'" $image $.Page.File.Path }}
             {{ end }}
-        {{ else }}
         {{ end }}
         <!-- Randomized class for stacking -->
         {{- if $useRandomImageStack }}
@@ -107,17 +111,19 @@
             {{- $title = printf "%s&quot;%q" $title $description -}}
         {{ end }}
 
-        <!-- Single Image Item -->
-        <div id="{{ $imageUrl }}" class="gallery-item {{ $randomClass }}" {{ $dataAttributes | safeHTMLAttr }}>
-            {{ partial "assets/image.html" (dict
-                "url" $imageUrl
-                "ratio" $ratio
-                "page" $.Page
-                "class" $imageCssClass
-                "loading" $loading
-                "title" $title
-                "caption" $caption
-            ) }}
-        </div>
+        {{ if eq $isError false }}
+            <!-- Single Image Item -->
+            <div id="{{ $imageUrl }}" class="gallery-item {{ $randomClass }}" {{ $dataAttributes | safeHTMLAttr }}>
+                {{ partial "assets/image.html" (dict
+                    "url" $imageUrl
+                    "ratio" $ratio
+                    "page" $.Page
+                    "class" $imageCssClass
+                    "loading" $loading
+                    "title" $title
+                    "caption" $caption
+                ) }}
+            </div>
+        {{ end }}
     {{- end }}
 </div>

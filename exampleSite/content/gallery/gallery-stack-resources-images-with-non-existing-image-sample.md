@@ -1,6 +1,5 @@
 ---
-title: "Gallery Stack Resources Sample"
-slug: "gallery-stack-res-img-sample"
+title: "Gallery Stack Resources with non existing image and cssClass Sample"
 thumbnail:
     url: /img/bird.jpg
 resources:
@@ -9,7 +8,7 @@ resources:
     params:
       description: "Description for bird image"
       cssClass: "w-50"
-  - src: "img/city.jpg"
+  - src: "img/city233.jpg"
     title: "Example caption 2"
     params:
       description: "Description for city image1
@@ -22,3 +21,5 @@ resources:
 ## Gallery Stack image resource Sample
 
 {{< gallery useRandomImageStack=false >}}
+
+Show Hugo Server warning output for non existing images
