@@ -204,7 +204,9 @@
     const titleDiv = createElementWithClass('div', LIGHTBOX_CLASSES.title);
     
     // Split the title by newline and filter out any empty lines
-    const titleLines = title.split('&quot;').map(line => line.trim()).filter(line => line.length > 0);
+    // Replace literal "\n" with actual newlines, then split by real newlines
+    const normalizedTitle = title.replace(/\\n/g, '\n');
+    const titleLines = normalizedTitle.split('\n').map(line => line.trim()).filter(line => line.length > 0);
     
     titleLines.forEach((line, index) => {
       const titleSpan = document.createElement('span');
@@ -216,7 +218,7 @@
       } else {
         titleSpan.classList.add('additional-lines');
       }
-      line = line.replace(/\\n/g, '');
+      //line = line.replace('\\n', '<br>');
       titleSpan.textContent = line;
       titleDiv.appendChild(titleSpan);
     });

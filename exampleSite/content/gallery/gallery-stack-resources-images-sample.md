@@ -4,14 +4,14 @@ title: "Gallery Stack Resources Sample"
 thumbnail:
     url: /img/bird.jpg
     
-slug: "gallery-stack-res-img-sample1"
 resources:
   - src: "img/bird.jpg"
     title: "Example caption 1"
     params:
-      description: >
+      description: |
         Description for bird image
         new line test
+
         end of line
       cssClass: "size-large"
   - src: "img/city.jpg"

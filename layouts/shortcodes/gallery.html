@@ -108,19 +108,20 @@
         {{- end -}}
        
         {{ if ne $description "" }}
-            {{- $title = printf "%s&quot;%q" $title $description -}}
+            {{- $title = printf "%s \\n %s" $title $description  -}}
+            {{ $title = $title }}
         {{ end }}
 
         {{ if eq $isError false }}
             <!-- Single Image Item -->
-            <div id="{{ $imageUrl }}" class="gallery-item {{ $randomClass }}" {{ $dataAttributes | safeHTMLAttr }}>
+            <div id="{{ $imageUrl }}" class="gallery-item {{ $randomClass }}" {{ $dataAttributes | safeHTMLAttr }} aria-describedby="{{ $title }}">
                 {{ partial "assets/image.html" (dict
                     "url" $imageUrl
                     "ratio" $ratio
                     "page" $.Page
                     "class" $imageCssClass
                     "loading" $loading
-                    "title" $title
+                    "title" $title 
                     "caption" $caption
                 ) }}
             </div>
