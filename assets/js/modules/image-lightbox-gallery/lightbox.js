@@ -251,8 +251,8 @@
         rotateRight: createButton('rotate-right-button', '⟳'),
         {{ end }}
         close: createButton('close-button', '&times;'),
-        prev: createButton('prev-button btn', '&larr;'),
-        next: createButton('next-button btn', '&rarr;')
+        prev: createButton('prev-button btn btn-secondary', '<-'),
+        next: createButton('next-button btn btn-secondary', '->')
       };
 
       // Append toolbar controls
