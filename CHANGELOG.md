@@ -1,3 +1,11 @@
+## [1.2.3](https://github.com/d-oit/hinode-mod-image-lightbox-gallery/compare/v1.2.2...v1.2.3) (2025-10-05)
+
+
+### Bug Fixes
+
+* add trailing slash to baseURL and configure URL settings for GitHub Pages ([728ae08](https://github.com/d-oit/hinode-mod-image-lightbox-gallery/commit/728ae085223baca589636d6abfcfc47d09b2c725))
+* remove baseURL override to let production config handle it ([16934eb](https://github.com/d-oit/hinode-mod-image-lightbox-gallery/commit/16934ebb1130710f3dc354b5231263647ad7165e))
+
 ## [1.2.2](https://github.com/d-oit/hinode-mod-image-lightbox-gallery/compare/v1.2.1...v1.2.2) (2025-10-05)
 
 
