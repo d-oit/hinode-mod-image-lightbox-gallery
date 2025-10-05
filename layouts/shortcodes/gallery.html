@@ -21,10 +21,9 @@
     <!-- Fix for subdirectory baseURL deployments like GitHub Pages -->
     {{- $cleanImagePath := $imagePath -}}
     
-    <!-- Strip baseURL prefix if it exists in the imagePath -->
-    {{- $baseURLPath := strings.TrimSuffix "/" (strings.TrimPrefix ($.Site.BaseURL | urls.Parse).Path "/") -}}
-    {{- if and (ne $baseURLPath "") (hasPrefix $imagePath (printf "/%s/" $baseURLPath)) -}}
-        {{- $cleanImagePath = strings.TrimPrefix (printf "/%s/" $baseURLPath) $imagePath -}}
+    <!-- Remove common problematic prefixes that cause resources.Match to fail -->
+    {{- if hasPrefix $imagePath "/hinode-mod-image-lightbox-gallery/" -}}
+        {{- $cleanImagePath = strings.TrimPrefix "/hinode-mod-image-lightbox-gallery/" $imagePath -}}
     {{- else if hasPrefix $imagePath "/" -}}
         {{- $cleanImagePath = strings.TrimPrefix "/" $imagePath -}}
     {{- end -}}
@@ -38,25 +37,18 @@
     {{- $images = resources.Match (printf "%s*" $cleanImagePath) -}}
     {{- $images = where $images "MediaType.MainType" "image" -}}
     
-    <!-- If no images found, try alternative matching patterns -->
+    <!-- Debug: Add warning if no images found to help troubleshoot -->
     {{- if eq (len $images) 0 -}}
-        <!-- Try without leading slash -->
-        {{- $altPath := strings.TrimPrefix "/" $imagePath -}}
-        {{- if not (hasSuffix $altPath "/") -}}
-            {{- $altPath = printf "%s/" $altPath -}}
-        {{- end -}}
+        {{- warnf "Gallery: No images found for path '%s' (cleaned from '%s'). Available resources pattern would be: '%s*'" $cleanImagePath $imagePath $cleanImagePath -}}
+        
+        <!-- Try alternative patterns -->
+        {{- $altPath := "img/tests/" -}}
         {{- $images = resources.Match (printf "%s*" $altPath) -}}
         {{- $images = where $images "MediaType.MainType" "image" -}}
-    {{- end -}}
-    
-    <!-- If still no images found, try the original path -->
-    {{- if eq (len $images) 0 -}}
-        {{- $originalPath := $imagePath -}}
-        {{- if not (hasSuffix $originalPath "/") -}}
-            {{- $originalPath = printf "%s/" $originalPath -}}
+        
+        {{- if gt (len $images) 0 -}}
+            {{- warnf "Gallery: Found %d images using fallback path '%s'" (len $images) $altPath -}}
         {{- end -}}
-        {{- $images = resources.Match (printf "%s*" $originalPath) -}}
-        {{- $images = where $images "MediaType.MainType" "image" -}}
     {{- end -}}
 {{- end }}
 
