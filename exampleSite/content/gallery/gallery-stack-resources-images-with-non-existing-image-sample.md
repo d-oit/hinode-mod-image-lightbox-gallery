@@ -8,7 +8,7 @@ resources:
     params:
       description: "Description for bird image"
       cssClass: "w-50"
-  - src: "img/city233.jpg"
+  - src: "img/city.jpg"
     title: "Example caption 2"
     params:
       description: "Description for city image1

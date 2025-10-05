@@ -1,7 +1,7 @@
 [module]
   [module.hugoVersion]
     extended = true
-    min = "0.110.0"
+    min = "0.146.0"
     max = ""
   [[module.mounts]]
     source = 'layouts'
@@ -16,5 +16,5 @@
     source = 'data'
     target = 'data' 
   [[module.imports]]
-    path = "github.com/gethinode/mod-utils/v2"  
+    path = "github.com/gethinode/mod-utils/v4"  
     

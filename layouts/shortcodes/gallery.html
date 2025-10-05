@@ -116,7 +116,7 @@
             <!-- Single Image Item -->
             <div id="{{ $imageUrl }}" class="gallery-item {{ $randomClass }}" {{ $dataAttributes | safeHTMLAttr }} aria-describedby="{{ $title }}">
                 {{ partial "assets/image.html" (dict
-                    "url" $imageUrl
+                    "src" $imageUrl
                     "ratio" $ratio
                     "page" $.Page
                     "class" $imageCssClass

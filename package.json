@@ -21,7 +21,7 @@
     "mod:update": "rimraf _vendor && hugo mod get -u ./... && hugo mod get -u && npm run -s mod:vendor && npm run -s mod:tidy",
     "mod:tidy": "hugo mod tidy",
     "mod:vendor": "rimraf _vendor && hugo mod vendor",
-    "postinstall": "echo TODO: add postinstall instructions",
+    "postinstall": "npx playwright install",
     "test": "npm run -s build",
     "upgrade": "npx npm-check-updates -u && npm run -s mod:update",
     "prepare": "node .husky/install.mjs"
@@ -30,21 +30,22 @@
     "type": "git",
     "url": "git+https://github.com/d-oit/hinode-mod-image-lightbox-gallery.git"
   },
-  "author": "Mark Dumay",
+  "author": "d.o. (module), Mark Dumay (Hinode)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gethinode/hinode/issues"
+    "url": "https://github.com/d-oit/hinode-mod-image-lightbox-gallery/issues"
   },
   "homepage": "https://gethinode.com",
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@semantic-release/exec": "^7.1.0",
+    "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "commitizen": "^4.3.1",
     "cpy-cli": "^6.0.0",
     "cz-conventional-changelog": "^3.3.0",
-    "hugo-bin": "^0.147.1",
+    "hugo-bin": "^0.148.0",
     "husky": "^9.1.7",
     "rimraf": "^6.0.1",
     "semantic-release": "^24.2.9"
