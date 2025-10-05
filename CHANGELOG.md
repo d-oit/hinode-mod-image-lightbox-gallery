@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/d-oit/hinode-mod-image-lightbox-gallery/compare/v1.2.0...v1.2.1) (2025-10-05)
+
+
+### Bug Fixes
+
+* add CHANGELOG.md to semantic-release git assets ([3348587](https://github.com/d-oit/hinode-mod-image-lightbox-gallery/commit/334858778421b974c3d61580b7eb7724999d152a))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
