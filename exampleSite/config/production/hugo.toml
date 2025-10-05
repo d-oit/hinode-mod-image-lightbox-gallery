@@ -1,1 +1,5 @@
-baseURL = "https://d-oit.github.io/hinode-mod-image-lightbox-gallery"
+baseURL = "https://d-oit.github.io/hinode-mod-image-lightbox-gallery/"
+
+# Ensure proper URL handling for subdirectory deployments
+canonifyURLs = true
+relativeURLs = false
