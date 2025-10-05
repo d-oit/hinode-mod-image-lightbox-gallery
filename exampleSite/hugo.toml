@@ -4,7 +4,6 @@ title = 'Test site for - mod-image-lightbox-gallery -'
 timeout = "180s"
 baseURL = "/"
 
-
 [module]
   replacements = 'github.com/d-oit/mod-image-lightbox-gallery -> ../..'
   # Build and serve using local mod-template clone declared in the named Hugo workspace:
