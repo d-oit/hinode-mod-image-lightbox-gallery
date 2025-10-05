@@ -18,8 +18,46 @@
     {{- $useExifCaption := false -}}
     {{- $images = .Page.Params.Resources -}} <!-- Fetch the resources defined in the frontmatter -->
 {{- else }}
-    {{- $images = resources.Match (printf "%s/*" $imagePath) -}} <!-- If not "submit", fall back to matching path -->
+    <!-- Fix for subdirectory baseURL deployments like GitHub Pages -->
+    {{- $cleanImagePath := $imagePath -}}
+    
+    <!-- Strip baseURL prefix if it exists in the imagePath -->
+    {{- $baseURLPath := strings.TrimSuffix "/" (strings.TrimPrefix ($.Site.BaseURL | urls.Parse).Path "/") -}}
+    {{- if and (ne $baseURLPath "") (hasPrefix $imagePath (printf "/%s/" $baseURLPath)) -}}
+        {{- $cleanImagePath = strings.TrimPrefix (printf "/%s/" $baseURLPath) $imagePath -}}
+    {{- else if hasPrefix $imagePath "/" -}}
+        {{- $cleanImagePath = strings.TrimPrefix "/" $imagePath -}}
+    {{- end -}}
+    
+    <!-- Ensure trailing slash for directory matching -->
+    {{- if not (hasSuffix $cleanImagePath "/") -}}
+        {{- $cleanImagePath = printf "%s/" $cleanImagePath -}}
+    {{- end -}}
+    
+    <!-- Try to match images with cleaned path -->
+    {{- $images = resources.Match (printf "%s*" $cleanImagePath) -}}
     {{- $images = where $images "MediaType.MainType" "image" -}}
+    
+    <!-- If no images found, try alternative matching patterns -->
+    {{- if eq (len $images) 0 -}}
+        <!-- Try without leading slash -->
+        {{- $altPath := strings.TrimPrefix "/" $imagePath -}}
+        {{- if not (hasSuffix $altPath "/") -}}
+            {{- $altPath = printf "%s/" $altPath -}}
+        {{- end -}}
+        {{- $images = resources.Match (printf "%s*" $altPath) -}}
+        {{- $images = where $images "MediaType.MainType" "image" -}}
+    {{- end -}}
+    
+    <!-- If still no images found, try the original path -->
+    {{- if eq (len $images) 0 -}}
+        {{- $originalPath := $imagePath -}}
+        {{- if not (hasSuffix $originalPath "/") -}}
+            {{- $originalPath = printf "%s/" $originalPath -}}
+        {{- end -}}
+        {{- $images = resources.Match (printf "%s*" $originalPath) -}}
+        {{- $images = where $images "MediaType.MainType" "image" -}}
+    {{- end -}}
 {{- end }}
 
 {{- if $useRandomImageStack -}}
