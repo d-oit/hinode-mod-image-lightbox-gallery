@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/d-oit/hinode-mod-image-lightbox-gallery/compare/v1.2.1...v1.2.2) (2025-10-05)
+
+
+### Bug Fixes
+
+* update baseURL for GitHub Pages deployment ([e7f5dff](https://github.com/d-oit/hinode-mod-image-lightbox-gallery/commit/e7f5dff6b80cc250bf1e2eb476d35ead15a5d235))
+
 ## [1.2.1](https://github.com/d-oit/hinode-mod-image-lightbox-gallery/compare/v1.2.0...v1.2.1) (2025-10-05)
 
 
