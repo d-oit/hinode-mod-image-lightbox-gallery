@@ -1,3 +1,10 @@
+## [1.2.5](https://github.com/d-oit/hinode-mod-image-lightbox-gallery/compare/v1.2.4...v1.2.5) (2025-10-05)
+
+
+### Bug Fixes
+
+* simplify resource resolution for subdirectory baseURL deployments ([8280b10](https://github.com/d-oit/hinode-mod-image-lightbox-gallery/commit/8280b1098c704b7da71f7a3f96b52142a00bee5d))
+
 ## [1.2.4](https://github.com/d-oit/hinode-mod-image-lightbox-gallery/compare/v1.2.3...v1.2.4) (2025-10-05)
 
 
