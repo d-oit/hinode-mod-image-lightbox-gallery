@@ -1,6 +1,6 @@
 {{- $imagePath := .Get "imagePath" | default "submit" -}}
 {{- $useExifCaption := .Get "useExifCaption" | default false -}}
-{{- $useRandomImageStack := .Get "useRandomImageStack" | default false -}} <!-- Control randomization -->
+{{- $useRandomImageStack := .Get "useRandomImageStack" | default false -}}
 {{- $imageCssClass := .Get "imageCssClass" | default "lightbox size-medium" -}}
 {{- $ratio := .Get "ratio" | default "auto" -}}
 {{- $loading := .Get "loading" | default "lazy" -}}
@@ -10,50 +10,44 @@
 {{- $galleryCssClass := .Get "galleryCssClass" | default "normal-gallery" -}}
 {{- $caption := .Get "caption" | default "" -}}
 
-<!-- Initialize $images to prevent the undefined variable error -->
-{{- $images := slice }}
+{{- $images := slice -}}
 
-<!-- If imagePath is set to "submit", fetch the images from .Params.resources -->
+{{- warnf "Gallery shortcode called with imagePath: '%s'" $imagePath -}}
+
 {{- if eq $imagePath "submit" }}
     {{- $useExifCaption := false -}}
-    {{- $images = .Page.Params.Resources -}} <!-- Fetch the resources defined in the frontmatter -->
+    {{/* Check for both Resources (capital R) and resources (lowercase r) */}}
+    {{- if isset .Page.Params "Resources" -}}
+        {{- $images = .Page.Params.Resources -}}
+    {{- else if isset .Page.Params "resources" -}}
+        {{- $images = .Page.Params.resources -}}
+    {{- end -}}
+    {{- warnf "Gallery: Using submit mode, found %d resources on page" (len $images) -}}
 {{- else }}
-    <!-- Fix for subdirectory baseURL deployments like GitHub Pages -->
     {{- $cleanImagePath := $imagePath -}}
     
-    <!-- Remove common problematic prefixes that cause resources.Match to fail -->
-    {{- if hasPrefix $imagePath "/hinode-mod-image-lightbox-gallery/" -}}
-        {{- $cleanImagePath = strings.TrimPrefix "/hinode-mod-image-lightbox-gallery/" $imagePath -}}
-    {{- else if hasPrefix $imagePath "/" -}}
+    {{- if hasPrefix $imagePath "/" -}}
         {{- $cleanImagePath = strings.TrimPrefix "/" $imagePath -}}
     {{- end -}}
-    
-    <!-- Ensure trailing slash for directory matching -->
+
     {{- if not (hasSuffix $cleanImagePath "/") -}}
         {{- $cleanImagePath = printf "%s/" $cleanImagePath -}}
     {{- end -}}
-    
-    <!-- Try to match images with cleaned path -->
+
+    {{- warnf "Gallery: Cleaned imagePath: '%s'" $cleanImagePath -}}
+
     {{- $images = resources.Match (printf "%s*" $cleanImagePath) -}}
     {{- $images = where $images "MediaType.MainType" "image" -}}
-    
-    <!-- Debug: Add warning if no images found to help troubleshoot -->
+
+    {{- warnf "Gallery: Found %d images matching pattern '%s*'" (len $images) $cleanImagePath -}}
+
     {{- if eq (len $images) 0 -}}
         {{- warnf "Gallery: No images found for path '%s' (cleaned from '%s'). Available resources pattern would be: '%s*'" $cleanImagePath $imagePath $cleanImagePath -}}
-        
-        <!-- Try alternative patterns -->
-        {{- $altPath := "img/tests/" -}}
-        {{- $images = resources.Match (printf "%s*" $altPath) -}}
-        {{- $images = where $images "MediaType.MainType" "image" -}}
-        
-        {{- if gt (len $images) 0 -}}
-            {{- warnf "Gallery: Found %d images using fallback path '%s'" (len $images) $altPath -}}
-        {{- end -}}
     {{- end -}}
 {{- end }}
 
 {{- if $useRandomImageStack -}}
-    {{- $images = shuffle $images -}} <!-- Shuffle images if randomization is true -->
+    {{- $images = shuffle $images -}}
     {{- $galleryCssClass = "collage-gallery" -}}
 {{- end -}}
 
@@ -61,28 +55,56 @@
     {{ partial "assets/gallery-search-input.html" (dict "searchclass" (printf "mt-4 mt-%s-0" $searchclass)) }}
 {{- end -}}
 
-<!-- Gallery Wrapper -->
 <div class="gallery {{ $galleryCssClass }}">
     {{- range $index, $image := $images }}
-        {{- $imageUrl := .RelPermalink }} <!-- Default to 3 columns -->
-        
+        {{- $imageUrl := .RelPermalink -}}
+        {{- $imageResource := . -}}
         {{- $description := "" -}}
         {{- $title := "" -}}
         {{- $randomClass := "" -}}
-        {{- $isError := default false -}}
+        {{- $isError := false -}}
 
         {{ if eq $imagePath "submit" }}
-            {{ with resources.Get $image.src }}
-                {{ $imageUrl = .RelPermalink }}
-                {{ $title = $image.title }}
-                {{ $description = $image.params.description }}
-                {{ $randomClass = $image.params.cssClass }}
+            {{- $cleanResourcePath := $image.src -}}
+            {{- warnf "Gallery: Original src: '%s'" $cleanResourcePath -}}
+            
+            {{- /* Handle absolute paths by removing leading slash */ -}}
+            {{- if hasPrefix $cleanResourcePath "/" -}}
+                {{- $cleanResourcePath = strings.TrimPrefix "/" $cleanResourcePath -}}
+            {{- end -}}
+            
+            {{- /* Try to get the resource with the cleaned path */ -}}
+            {{ with resources.Get $cleanResourcePath }}
+                {{- $imageResource = . -}}
+                {{- $imageUrl = .RelPermalink -}}
+                {{- $title = $image.title -}}
+                {{- $description = $image.params.description -}}
+                {{- $randomClass = $image.params.cssClass -}}
             {{ else }}
-                {{ $isError = true }}
-                {{ warnf "Resource file not found:\n'%s'\n page\n '%s'" $image $.Page.File.Path }}
+                {{- /* If not found, try prepending 'assets/' since images are in assets/img */ -}}
+                {{- $assetsPath := printf "assets/%s" $cleanResourcePath -}}
+                {{ with resources.Get $assetsPath }}
+                    {{- $imageResource = . -}}
+                    {{- $imageUrl = .RelPermalink -}}
+                    {{- $title = $image.title -}}
+                    {{- $description = $image.params.description -}}
+                    {{- $randomClass = $image.params.cssClass -}}
+                {{ else }}
+                    {{- /* If still not found, try the original path as-is */ -}}
+                    {{- $imageResource = resources.GetMatch $cleanResourcePath -}}
+                    {{- if $imageResource -}}
+                        {{- $imageUrl = $imageResource.RelPermalink -}}
+                        {{- $title = $image.title -}}
+                        {{- $description = $image.params.description -}}
+                        {{- $randomClass = $image.params.cssClass -}}
+                    {{ else }}
+                        {{ $isError = true }}
+                        {{ warnf "Cannot find image resource: \"%s\"" $cleanResourcePath }}
+                    {{- end -}}
+                {{ end }}
             {{ end }}
         {{ end }}
-        <!-- Randomized class for stacking -->
+        
         {{- if $useRandomImageStack }}
             {{- $sizes := slice "size-small" "size-medium" "size-large" }}
             {{- $randomClass = index $sizes (mod $index 3) -}}
@@ -94,35 +116,36 @@
         {{- end -}}
         {{- $CaptionValue := $description -}}
 
-        <!-- Extract EXIF title if useExifCaption is true -->
         {{- $exifValue := "" -}}
-        {{- if and $useExifCaption (resources.Get $image.RelPermalink) }}
-            {{- with (resources.Get $image.Name).Exif.Tags.ImageDescription -}}
-                {{- $exifValue = .  -}}
-                {{- if ne $exifValue "" -}}
-                    {{- $CaptionValue = $exifValue -}}
+        {{- if and $useExifCaption $imageResource }}
+            {{- with $imageResource.Exif -}}
+                {{- with .Tags.ImageDescription -}}
+                    {{- $exifValue = . -}}
+                    {{- if ne $exifValue "" -}}
+                        {{- $CaptionValue = $exifValue -}}
+                    {{- end -}}
                 {{- end -}}
-            {{- end -}}
 
-            {{- with (resources.Get $image.Name).Exif.Tags.XPKeywords -}}
-                {{- $keywords := .  -}}
-                {{- if ne $keywords "" -}}
-                    {{- $dataAttributes = printf "%s data-image-tags=%q" $dataAttributes $keywords -}}
-                {{- end }}
-            {{- end -}}
+                {{- with .Tags.XPKeywords -}}
+                    {{- $keywords := . -}}
+                    {{- if ne $keywords "" -}}
+                        {{- $dataAttributes = printf "%s data-image-tags=%q" $dataAttributes $keywords -}}
+                    {{- end }}
+                {{- end -}}
 
-            {{- with (resources.Get $image.Name).Exif.Tags.XPSubject -}}
-                {{- $subject := . -}}
-                {{- if ne $subject "" -}}
-                    {{- $dataAttributes = printf "%s data-image-subject=%q" $dataAttributes $subject  -}}
-                {{- end }}
-            {{- end -}}
+                {{- with .Tags.XPSubject -}}
+                    {{- $subject := . -}}
+                    {{- if ne $subject "" -}}
+                        {{- $dataAttributes = printf "%s data-image-subject=%q" $dataAttributes $subject -}}
+                    {{- end }}
+                {{- end -}}
 
-            {{- with (resources.Get $image.Name).Exif.Tags.XPComment -}}
-                {{- $XPComment := . -}}
-                {{- if ne $XPComment "" -}}
-                    {{- $dataAttributes = printf "%s data-image-description=%q" $dataAttributes $XPComment   -}}
-                {{- end }}
+                {{- with .Tags.XPComment -}}
+                    {{- $XPComment := . -}}
+                    {{- if ne $XPComment "" -}}
+                        {{- $dataAttributes = printf "%s data-image-description=%q" $dataAttributes $XPComment -}}
+                    {{- end }}
+                {{- end -}}
             {{- end -}}
         {{- end -}}
 
@@ -134,16 +157,14 @@
         {{- $dataAttributes = printf "%s data-show-image-caption=%t" $dataAttributes $showGalleryImageCaption -}}
 
         {{- if ne $description "" -}}
-            {{- $dataAttributes = printf "%s data-image-description=%q" $dataAttributes false -}}
+            {{- $dataAttributes = printf "%s data-image-description=%q" $dataAttributes $description -}}
         {{- end -}}
        
         {{ if ne $description "" }}
-            {{- $title = printf "%s \\n %s" $title $description  -}}
-            {{ $title = $title }}
+            {{- $title = printf "%s \\n %s" $title $description -}}
         {{ end }}
 
-        {{ if eq $isError false }}
-            <!-- Single Image Item -->
+        {{ if not $isError }}
             <div id="{{ $imageUrl }}" class="gallery-item {{ $randomClass }}" {{ $dataAttributes | safeHTMLAttr }} aria-describedby="{{ $title }}">
                 {{ partial "assets/image.html" (dict
                     "src" $imageUrl
