@@ -32,5 +32,11 @@ baseURL = "/"
     path = "github.com/gethinode/mod-simple-datatables"
   [[module.imports]]
     path = "github.com/gethinode/mod-utils/v4"
+  [[module.mounts]]
+    source = 'assets'
+    target = 'assets'
+  [[module.mounts]]
+    source = 'static'
+    target = 'assets'
 
  
